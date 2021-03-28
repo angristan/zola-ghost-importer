@@ -69,6 +69,7 @@ class Post < OpenStruct
     front_matter_hash['extra']['feature_image'] = feature_image unless feature_image.nil?
 
     front_matter_hash['date'] = date.strftime('%Y-%m-%d') if !draft? && date
+    front_matter_hash['slug'] = slug
     front_matter_hash['taxonomies']['tags'] = tags if tags.any?
     front_matter_hash['description'] = custom_excerpt
     front_matter_hash
