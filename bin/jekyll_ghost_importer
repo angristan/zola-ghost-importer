@@ -91,7 +91,7 @@ class Post < OpenStruct
   end
 
   def markdown_from_html
-    ReverseMarkdown.convert html
+    ReverseMarkdown.convert(html, github_flavored: true)
   end
 
   def basename
