@@ -27,6 +27,7 @@ require 'toml'
 class Post < OpenStruct
   def import
     puts "Importing #{filename}"
+    FileUtils.mkdir_p(postdirname)
     File.write filename, full_body
   end
 
@@ -44,8 +45,12 @@ class Post < OpenStruct
     draft? ? '_drafts' : '_posts'
   end
 
+  def postdirname
+    File.join folder, post_folder
+  end
+
   def filename
-    File.join folder, basename
+    File.join postdirname, 'index.md'
   end
 
   def date
@@ -69,7 +74,7 @@ class Post < OpenStruct
     front_matter_hash['extra']['feature_image'] = feature_image unless feature_image.nil?
 
     front_matter_hash['date'] = date.strftime('%Y-%m-%d') if !draft? && date
-    front_matter_hash['slug'] = slug
+    front_matter_hash['slug'] = "#{date.strftime('%Y/%m')}/#{slug}" if !draft? && date
     front_matter_hash['taxonomies']['tags'] = tags if tags.any?
     front_matter_hash['description'] = custom_excerpt
     front_matter_hash
@@ -95,11 +100,11 @@ class Post < OpenStruct
     ReverseMarkdown.convert(html, github_flavored: true)
   end
 
-  def basename
+  def post_folder
     if draft?
-      "#{slug}.markdown"
+      slug.to_s
     else
-      "#{date.strftime('%Y-%m-%d')}-#{slug}.markdown"
+      "#{date.strftime('%Y-%m')}-#{slug}"
     end
   end
 end
